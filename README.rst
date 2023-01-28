@@ -31,6 +31,7 @@ To install the Discord.py, you can just run the following command:
 Otherwise to install all require libraries you should run this command:
 
 .. code:: sh
+
    # Linux/maxOS
    python3 -m pip install -r requirements.txt
 
