@@ -95,12 +95,13 @@ Parameter Notes
    * The optional parameter is `initialize_extensions` paramter. You can able to ignore some cog files.
 
 Example for optional parameter
+
 .. code:: py
 
    # Default Parameter
    initial_extensions = ['cogs.error', 'cogs.health', 'cogs.report', 'cogs.moderation', 'cogs.utility']
 
-   # You can change that parameter value to:
+   # You can change that 'initialize_extensions' value to:
    initial_extensions = ['cogs.error, 'cogs.health', 'cogs.report']
 
    # This will ignore 'cogs.moderation' and 'cogs.utility' files
