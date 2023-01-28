@@ -1,4 +1,6 @@
-.venv/
-sodynoizz.log
 __pycache__
+.venv
+.vscode
 config/secret.py
+debug.py
+sodynoizz.log
