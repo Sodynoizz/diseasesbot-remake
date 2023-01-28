@@ -102,7 +102,7 @@ Example for optional parameter
    initial_extensions = ['cogs.error', 'cogs.health', 'cogs.report', 'cogs.moderation', 'cogs.utility']
 
    # You can change that 'initialize_extensions' value to:
-   initial_extensions = ['cogs.error, 'cogs.report']
+   initial_extensions = ['cogs.error', 'cogs.report']
 
    # This will ignore 'cogs.moderation', 'cogs.health' and 'cogs.utility' files
    # So that the bot will run the others files left.
