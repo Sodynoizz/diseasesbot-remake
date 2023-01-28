@@ -72,23 +72,9 @@ def setup_logging() -> None:
         for handler in handlers:
             handler.close()
             log.removeHandler(handler)
-    
-async def create_pool() -> asyncpg.Pool:
-    ...       
 
 async def run_bot() -> None:
-    log = logging.getLogger()
-    
-    try:
-        pool = await create_pool()
-        
-    except Exception:
-        click.echo('Could not set up PostgresSQL. Exiting.', file=sys.stderr)
-        log.exception('Could not set up PostgresSQL. Exiting.')
-        return 
-
     async with DiseasesBot() as bot:
-        bot.pool = pool
         await bot.start()
 
 @click.group(invoke_without_command=True, options_metavar='[options]')
