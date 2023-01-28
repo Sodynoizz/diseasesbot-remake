@@ -1,0 +1,42 @@
+{
+    "1" : {
+        "name" : "นายกิรัชภาส ถาวร",
+        "nickname" : "โอโซน",
+        "number" : "19",
+        "instagram" : "ozone_krp._",
+        "thumbnail" : "https://cdn.discordapp.com/attachments/1015231602411974766/1019259224414502972/299142491_1026766448034275_3817811796660175874_n.jpg"
+    },
+
+    "2" : {
+        "name" : "นายชลสิทธิ์ อภิลาศมงคล",
+        "nickname" : "โซดา",
+        "number" : "20",
+        "instagram" : "sodynoizz._",
+        "thumbnail" : "https://cdn.discordapp.com/attachments/1015231602411974766/1019259736845209650/289886975_431896798590945_7782291808916213065_n.jpg"
+    },
+
+    "3" : {
+        "name" : "นายปัณณ์ ตรีสัตยพันธุ์",
+        "nickname" : "ปันตรี",
+        "number" : "31",
+        "instagram" : "puntre_is_bruh",
+        "thumbnail" : "https://cdn.discordapp.com/attachments/1015231602411974766/1019259732969668659/299924072_436980741703845_7830800745977615190_n.jpg"
+    },
+
+    "4" : {
+        "name" : "นายพัฒนแสง พินิจพิชิตกุล",
+        "nickname" : "ฟีนิกซ์",
+        "number" : "36",
+        "instagram" : "||_ph.pp_||",
+        "thumbnail" : "https://cdn.discordapp.com/attachments/866492209121460225/1019260766924308500/IMG_2101.jpg"
+    },
+
+    "5" : {
+        "name" : "นายสิรภพ ขาวพลัด",
+        "nickname" : "ปริม",
+        "number" : "40",
+        "instagram" : "pskhaw_143",
+        "thumbnail" : "https://cdn.discordapp.com/attachments/866492209121460225/1019260767230513243/IMG_2100.jpg"
+    }
+    
+}

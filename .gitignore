@@ -1,0 +1,4 @@
+.venv/
+sodynoizz.log
+__pycache__
+config/secret.py
