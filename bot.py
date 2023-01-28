@@ -85,7 +85,7 @@ class DiseasesBot(commands.AutoShardedBot):
     
     @property
     def partner_id(self) -> int:
-        return 880358178687184896
+        return secret.contributor_id
     
     @property
     def server_invite(self) -> str:
