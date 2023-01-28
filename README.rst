@@ -22,26 +22,38 @@ To install the Discord.py, you can just run the following command:
 
 .. code:: sh
 
-   # Linux/maxOS
-   python3 -m pip install -U discord.py
+   # Linux/MacOS
+   python3 -m pip install -U "discord.py"
 
    # Windows
    py -3 -m pip install -U discord.py
 
-Otherwise to install all require libraries you should run this command:
+Otherwise to install all require libraries you should run the following command:
 
 .. code:: sh
 
-   # Linux/maxOS
-   python3 -m pip install -r requirements.txt
+   # Linux/MacOS
+   python3 -m pip install -r "requirements.txt"
 
    # Windows
+   py -3 -m pip install -r requirements.txt
+
+To clone my development project, do the follwing:
+
+.. code:: sh
+
+   # Linux/MacOS
+   $ git clone clone Sodynoizz/diseasesbot-remake
+   $ python3 -m pip install -r requirements.txt
+   
+   # Windows
+   $ git clone clone Sodynoizz/diseasesbot-remake
    py -3 -m pip install -r requirements.txt
 
 Optional Packages
 ~~~~~~~~~~~~~~~~~
 
-* `PyNaCl <https://pypi.org/project/PyNaCl/>`__ (for voice support)
+* `PyNaCl <https://pypi.org/project/PyNaCl/>`__ (for voice discord.py support)
 * `aiodns <https://pypi.org/project/aiodns/>`__, `brotlipy <https://pypi.org/project/brotlipy/>`__, `cchardet <https://pypi.org/project/cchardet/>`__ (for aiohttp speedup)
 * `orjson <https://pypi.org/project/orjson/>`__ (for json speedup)
 
@@ -53,7 +65,7 @@ Please note that while installing voice support on Linux, you must install the f
 Running your bot
 --------------------
 
-To run your bot, you should rename ``secret[config].py`` to ``secret.py``
+To run your bot, you should rename ``secret[config].py`` to ``secret.py``.
 Then next, configure all variable in following table:
 
 .. list-table::
@@ -86,3 +98,11 @@ References
 - `Discord.py Documentation <https://docs.pycord.dev/en/master/index.html>`_
 - `Official Discord.py Server <https://discord.gg/r3sSKJJ>`_
 - `Discord API <https://discord.gg/discord-api>`_
+
+Contributors
+------------
+- `Kiruchapas Thaworn <https://www.instagram.com/ozone_krp._/>`_
+- `Chorasit Apilardmongkol <https://sodynoizz.github.io>`_
+- `Pun Tresattayapan <https://www.instagram.com/puntre_is_bruh/>`_
+- `Pattanasang Pinijpichitkul <https://www.instagram.com/ll_ph.pp_ll/>`_
+- `Siraphop Klawplad <https://www.instagram.com/pskhaw_143/>`_  
