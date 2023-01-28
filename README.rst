@@ -11,7 +11,7 @@ DiseasesBot
    :target: https://discord.com/channels/@me/884707218577063998
    :alt: My discord account
 
-A bot which using Discord.py v2.0 library, a modern, easy to use,feature-rich, and async ready API wrapper for Discord Written in Python to create about health information and others.
+A bot which using Discord.py v2.0 library, a modern, easy to use, feature-rich, and async ready API wrapper for Discord Written in Python to create about health information and others.
 
 Installing
 --------------------
@@ -24,7 +24,6 @@ To install the Discord.py, you can just run the following command:
 
    # Linux/MacOS
    python3 -m pip install -U "discord.py"
-
    # Windows
    py -3 -m pip install -U discord.py
 
@@ -34,18 +33,16 @@ Otherwise to install all require libraries you should run the following command:
 
    # Linux/MacOS
    python3 -m pip install -r "requirements.txt"
-
    # Windows
    py -3 -m pip install -r requirements.txt
 
-To clone my development project, do the follwing:
+To clone my development project, do the following command:
 
 .. code:: sh
 
    # Linux/MacOS
    $ git clone clone Sodynoizz/diseasesbot-remake
    $ python3 -m pip install -r requirements.txt
-   
    # Windows
    $ git clone clone Sodynoizz/diseasesbot-remake
    py -3 -m pip install -r requirements.txt
@@ -75,13 +72,13 @@ Then next, configure all variable in following table:
       - Description
    
    *  - ``database_name``
-      - Provide your postgresql's database name
+      - Provide your Postgresql's database name
 
    *  - ``database_password``
-      - Provide your postgresql's database password
+      - Provide your Postgresql's database password
 
    *  - ``database_user``
-      - Provide your postgresql's database user name
+      - Provide your Postgresql's database user name
    
    *  - ``default_prefix``
       - Setup for your bot default prefix to use in prefixed-command
@@ -91,6 +88,23 @@ Then next, configure all variable in following table:
    
    *  - ``contributor_id``
       - Provide contributor's id to gain access through discord permissions.
+
+Parameter Notes
+~~~~~~~~~~~~~~~~~
+   * Do not change `covid_api` parameter value since it will make `covidstats` command crash.
+   * The optional parameter is `initialize_extensions` paramter. You can able to ignore some cog files.
+
+Example for optional parameter
+.. code:: py
+
+   # Default Parameter
+   initial_extensions = ['cogs.error', 'cogs.health', 'cogs.report', 'cogs.moderation', 'cogs.utility']
+
+   # You can change that parameter value to:
+   initial_extensions = ['cogs.error, 'cogs.health', 'cogs.report']
+
+   # This will ignore 'cogs.moderation' and 'cogs.utility' files
+   # So that the bot will run the others files left.
 
 References
 ------------
