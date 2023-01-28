@@ -5,4 +5,3 @@ database_user = "" # Your postgresql's user name
 default_prefix = "" # Default prefix here
 initial_extensions = ['cogs.error', 'cogs.health', 'cogs.report', 'cogs.moderation', 'cogs.utility']
 report_channel = 1021746124018700298
-news_api = ""
