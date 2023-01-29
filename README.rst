@@ -122,6 +122,5 @@ Contributors
 - `Pattanasang Pinijpichitkul <https://www.instagram.com/ll_ph.pp_ll/>`_
 - `Siraphop Klawplad <https://www.instagram.com/pskhaw_143/>`_  
 
-.. image:: ./config/banner.jpg
+.. image:: /config/banner.jpg
    :alt: DiseasesBot banner
-   
