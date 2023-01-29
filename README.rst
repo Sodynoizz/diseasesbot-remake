@@ -1,4 +1,4 @@
-DiseasesBot
+DiseasesBot Project
 ====================
 .. image:: https://discord.com/api/guilds/1021730173982347298/embed.png 
    :target: https://discord.gg/v5jBXfnX
@@ -11,7 +11,7 @@ DiseasesBot
    :target: https://discord.com/channels/@me/884707218577063998
    :alt: My discord account
 
-A bot which using Discord.py v2.0 library, a modern, easy to use, feature-rich, and async ready API wrapper for Discord Written in Python to create about health information and others.
+A bot which using Discord.py v2.0 library which is a modern, easy to use, feature-rich, and async ready API wrapper for Discord Written in Python to create about health information and others.
 
 Installing
 --------------------
@@ -50,7 +50,9 @@ To clone my development project, do the following command:
 Optional Packages
 ~~~~~~~~~~~~~~~~~
 
-* `PyNaCl <https://pypi.org/project/PyNaCl/>`__ (for voice discord.py support)
+**These following packages are optional. They will support or speedup for the require packages.**
+
+* `PyNaCl <https://pypi.org/project/PyNaCl/>`__ (for voice discord.py support for ``discord.py[voice]`` package)
 * `aiodns <https://pypi.org/project/aiodns/>`__, `brotlipy <https://pypi.org/project/brotlipy/>`__, `cchardet <https://pypi.org/project/cchardet/>`__ (for aiohttp speedup)
 * `orjson <https://pypi.org/project/orjson/>`__ (for json speedup)
 
@@ -59,7 +61,7 @@ Please note that while installing voice support on Linux, you must install the f
 * libffi-dev (or ``libffi-devel`` on some systems)
 * python-dev (e.g. ``python3.10-dev`` for Python 3.10)
 
-Running your bot
+Running your discord bot
 --------------------
 
 To run your bot, you should rename ``secret[config].py`` to ``secret.py``.
@@ -68,7 +70,7 @@ Then next, configure all variable in following table:
 .. list-table::
    :header-rows: 1
 
-   *  - Variable
+   *  - Parameter Name
       - Description
    
    *  - ``database_name``
