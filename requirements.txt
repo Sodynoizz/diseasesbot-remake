@@ -1,7 +1,6 @@
 asyncpg
 click
-discord.py[speedups]
-discord.py[voice]
+discord.py[speedups, voice]
 humanfriendly
 git+https://github.com/Rapptz/discord.py
 git+https://github.com/Rapptz/discord-ext-menus

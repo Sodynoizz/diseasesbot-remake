@@ -45,7 +45,7 @@ To clone my development project, do the following command:
    $ python3 -m pip install -r requirements.txt
    # Windows
    $ git clone clone Sodynoizz/diseasesbot-remake
-   py -3 -m pip install -r requirements.txt
+   $ py -3 -m pip install -r requirements.txt
 
 Optional Packages
 ~~~~~~~~~~~~~~~~~
@@ -121,3 +121,7 @@ Contributors
 - `Pun Tresattayapan <https://www.instagram.com/puntre_is_bruh/>`_
 - `Pattanasang Pinijpichitkul <https://www.instagram.com/ll_ph.pp_ll/>`_
 - `Siraphop Klawplad <https://www.instagram.com/pskhaw_143/>`_  
+
+.. image:: ./config/banner.jpg
+   :alt: DiseasesBot banner
+   
