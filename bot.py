@@ -103,7 +103,7 @@ class DiseasesBot(commands.AutoShardedBot):
                                             user=secret.database_user,
                                             password=secret.database_password
                                         )
-        
+    
     async def on_ready(self) -> None:
         print(f"{self.user} is ready")
         
