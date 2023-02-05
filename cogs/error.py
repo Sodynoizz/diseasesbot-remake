@@ -22,11 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import discord
-from discord import app_commands
-from discord.ext import commands
-
-from bot import DiseasesBot
+from .__init__ import *
 
 
 class Error(commands.Cog):
@@ -47,8 +43,8 @@ class Error(commands.Cog):
         tree = self.bot.tree
         tree.on_error = self._old_tree_error
 
-    def build_error_embed(self, error) -> discord.Embed:
-        embed = discord.Embed(color=discord.Colour.red())
+    def build_error_embed(self, error) -> Embed:
+        embed = Embed(color=Colour.red())
         embed.title = "❌ | Something went wrong internally."
 
         if isinstance(error, app_commands.CommandOnCooldown):
@@ -62,7 +58,7 @@ class Error(commands.Cog):
         return embed
 
     async def on_app_command_error(
-        self, interaction: discord.Interaction, error: app_commands.AppCommandError
+        self, interaction: Interaction, error: app_commands.AppCommandError
     ):
         if getattr(interaction, "handled", False):
             return

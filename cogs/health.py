@@ -22,18 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import asyncio
-import contextlib
-from datetime import datetime, timezone
-import discord
-from discord import app_commands, ButtonStyle, TextStyle
-from discord.ext import commands
-from discord.ui import Button, Modal, TextInput, View, button
-from typing import Self, Union
-
-from bot import DiseasesBot
-from utils.database import Database
-from utils.formatter import Formatter
+from .__init__ import *
 
 
 class CovidStatsView(View):
@@ -72,7 +61,7 @@ class DiseasesView(View):
 
 
 class RecordPaginator(View):
-    def __init__(self, interaction: discord.Interaction, embed_lists: list):
+    def __init__(self, interaction: Interaction, embed_lists: list):
         super().__init__(timeout=30)
         self.interaction = interaction
         self.current_page = 0
@@ -85,7 +74,7 @@ class RecordPaginator(View):
         await self.interaction.response.send_message(embed=self.pages[0], view=self)
         self.message = await self.interaction.original_response()
 
-    async def show_page(self, interaction: discord.Interaction, page: int):
+    async def show_page(self, interaction: Interaction, page: int):
         self.current_page = page
         self.initialize_page()
         self.initialize_view(self.current_page)
@@ -97,37 +86,37 @@ class RecordPaginator(View):
     @button(
         label="first",
         emoji="<:first_page_white:1058405780895842405>",
-        style=discord.ButtonStyle.secondary,
+        style=ButtonStyle.secondary,
     )
-    async def first_page(self, interaction: discord.Interaction, button: Button):
+    async def first_page(self, interaction: Interaction, button: Button):
         await self.show_page(interaction, 0)
 
     @button(
         label="prev",
         emoji="<:previous:999541041327775784>",
-        style=discord.ButtonStyle.secondary,
+        style=ButtonStyle.secondary,
     )
-    async def previous_page(self, interaction: discord.Interaction, button: Button):
+    async def previous_page(self, interaction: Interaction, button: Button):
         await self.show_page(interaction, self.current_page - 1)
 
-    @button(style=discord.ButtonStyle.primary, disabled=True)
-    async def page_indicator(self, interaction: discord.Interaction, button: Button):
+    @button(style=ButtonStyle.primary, disabled=True)
+    async def page_indicator(self, interaction: Interaction, button: Button):
         ...
 
     @button(
         label="next",
         emoji="<:next:999541035304747120>",
-        style=discord.ButtonStyle.secondary,
+        style=ButtonStyle.secondary,
     )
-    async def next_page(self, interaction: discord.Interaction, button: Button):
+    async def next_page(self, interaction: Interaction, button: Button):
         await self.show_page(interaction, self.current_page + 1)
 
     @button(
         label="last",
         emoji="<:last_page_white:1058405905592500365>",
-        style=discord.ButtonStyle.secondary,
+        style=ButtonStyle.secondary,
     )
-    async def last_page(self, interaction: discord.Interaction, button: Button):
+    async def last_page(self, interaction: Interaction, button: Button):
         await self.show_page(interaction, self.max_page - 1)
 
     def extract(self, arg1: bool, arg2: bool) -> None:
@@ -150,11 +139,11 @@ class RecordPaginator(View):
         else:
             self.extract(False, False)
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: Interaction) -> bool:
         return self.interaction.user == interaction.user
 
     async def on_timeout(self) -> None:
-        self.message: Union[discord.Message, discord.InteractionMessage]
+        self.message: Union[Message, InteractionMessage]
         for child in self.children:
             child.disabled = True
         await self.message.edit(view=self)
@@ -164,7 +153,7 @@ class RecordHealth(Modal):
     def __init__(
         self,
         bot: DiseasesBot,
-        user: Union[discord.Member, discord.User],
+        user: Union[Member, User],
         primary: bool = True,
         *args,
         **kwargs,
@@ -176,12 +165,12 @@ class RecordHealth(Modal):
 
     description = TextInput(label="รายงานผลสุขภาพประจำวันนี้", style=TextStyle.long)
 
-    async def on_submit(self, interaction: discord.Interaction):
+    async def on_submit(self, interaction: Interaction):
         date = Formatter.unix_formatter(datetime.now(timezone.utc))
-        embed = discord.Embed(
+        embed = Embed(
             title="ยืนยันการรายงานหรือไม่",
             description=f"```{str(self.description)}```",
-            color=discord.Colour.yellow(),
+            color=Colour.yellow(),
         )
         embed.set_footer(
             text=f"Requested by {interaction.user}",
@@ -204,7 +193,7 @@ class ConfirmSend(View):
     def __init__(
         self,
         bot: DiseasesBot,
-        user: Union[discord.Member, discord.User],
+        user: Union[Member, User],
         time: int,
         reason: str,
         *args,
@@ -217,16 +206,16 @@ class ConfirmSend(View):
         self.reason = reason
         self.database = Database(self.bot)
 
-    @discord.ui.button(label="confirm", style=ButtonStyle.success)
-    async def confirm(self, interaction: discord.Interaction, button: Button):
+    @button(label="confirm", style=ButtonStyle.success)
+    async def confirm(self, interaction: Interaction, button: Button):
         self.disable_all_items()
         await self.database.health_info_entry(
             interaction.user.id, time=self.time, reason=self.reason
         )
-        embed = discord.Embed(
+        embed = Embed(
             title="รายงานผลสำเร็จ : ",
             description=f"```{self.reason}```",
-            color=discord.Colour.green(),
+            color=Colour.green(),
         )
         embed.set_footer(
             text=f"Requested by {interaction.user}",
@@ -234,13 +223,13 @@ class ConfirmSend(View):
         )
         await interaction.response.edit_message(embed=embed, view=self)
 
-    @discord.ui.button(label="edit", style=ButtonStyle.danger)
-    async def edit(self, interaction: discord.Interaction, button: Button):
+    @button(label="edit", style=ButtonStyle.danger)
+    async def edit(self, interaction: Interaction, button: Button):
         modal = RecordHealth(self.bot, interaction.user, primary=False)
         await interaction.response.send_modal(modal)
         modal.message = await interaction.original_response()
 
-    async def interaction_check(self, interaction: discord.Interaction):
+    async def interaction_check(self, interaction: Interaction):
         return self.user.id == interaction.user.id
 
     def disable_all_items(self) -> None:
@@ -249,8 +238,8 @@ class ConfirmSend(View):
 
     async def on_timeout(self) -> None:
         self.disable_all_items()
-        self.message: Union[discord.Message, discord.InteractionMessage]
-        with contextlib.suppress(TypeError, discord.errors.NotFound):
+        self.message: Union[Message, InteractionMessage]
+        with suppress(TypeError, errors.NotFound):
             await self.message.edit(view=self)
             await asyncio.sleep(5)
             await self.message.delete()
@@ -272,8 +261,8 @@ class Health(commands.Cog):
     @app_commands.checks.cooldown(1, 10)
     @app_commands.describe(diseases_name="เลือกโรคที่ต้องการ")
     async def diseases(
-        self, interaction: discord.Interaction, diseases_name: str
-    ) -> Union[discord.Message, discord.InteractionMessage]:
+        self, interaction: Interaction, diseases_name: str
+    ) -> Union[Message, InteractionMessage]:
         """ตรวจสอบรายละเอียดโรคระบาดแต่ละโรค"""
         info = None
 
@@ -281,10 +270,10 @@ class Health(commands.Cog):
             if self.disease[index]["name"] == diseases_name:
                 info = self.disease[index]
 
-        embed = discord.Embed(
+        embed = Embed(
             title=info["name"],
             description=f"```{info['description']}```",
-            color=discord.Colour.dark_theme(),
+            color=Colour.dark_theme(),
         )
 
         embed.add_field(
@@ -306,7 +295,7 @@ class Health(commands.Cog):
 
     @diseases.autocomplete("diseases_name")
     async def diseases_autocomplete(
-        self, interaction: discord.Interaction, current: str
+        self, interaction: Interaction, current: str
     ) -> list(app_commands.Choice[str]):
         choices = [self.disease[i]["name"] for i in list(self.disease)]
 
@@ -319,12 +308,12 @@ class Health(commands.Cog):
     @app_commands.command(name="covid_stats")
     @app_commands.checks.cooldown(1, 15)
     async def covid_stats(
-        self, interaction: discord.Interaction
-    ) -> Union[discord.Message, discord.InteractionMessage]:
+        self, interaction: Interaction
+    ) -> Union[Message, InteractionMessage]:
         """รายงานสถิติโควิด-19 ในประเทศไทย"""
         data = await self.database.fetch_covid_data()
-        embed = discord.Embed(
-            title="รายงานสถานการณ์โรคระบาดโควิด-19", color=discord.Colour.dark_theme()
+        embed = Embed(
+            title="รายงานสถานการณ์โรคระบาดโควิด-19", color=Colour.dark_theme()
         )
         embed.description = ""
 
@@ -347,23 +336,19 @@ class Health(commands.Cog):
 
     @app_commands.command(name="record")
     @app_commands.checks.cooldown(1, 30)
-    async def record(
-        self, interaction: discord.Interaction
-    ) -> discord.InteractionMessage:
+    async def record(self, interaction: Interaction) -> InteractionMessage:
         """บันทึกรายงานสุขภาพประจำวัน"""
         await interaction.response.send_modal(RecordHealth(self.bot, interaction.user))
 
     @app_commands.command(name="record_view")
     @app_commands.checks.cooldown(1, 15)
-    async def view_record(
-        self, interaction: discord.Interaction
-    ) -> discord.InteractionMessage:
+    async def view_record(self, interaction: Interaction) -> InteractionMessage:
         """ดูบันทึกการรายงาานสุขภาพของตนเอง"""
         data = await self.database.health_info_logs(user_id=interaction.user.id)
         if data == []:
-            embed = discord.Embed(
+            embed = Embed(
                 description=f"{interaction.user.mention} ยังไม่เคยมีข้อมูลบันทึกรายงานสุขภาพของคุณ",
-                color=discord.Colour.red(),
+                color=Colour.red(),
             )
             return await interaction.response.send_message(embed=embed)
 
@@ -372,10 +357,10 @@ class Health(commands.Cog):
         embed_lists = []
 
         for index, value in enumerate(data):
-            with contextlib.suppress(IndexError):
-                embed = discord.Embed(
+            with suppress(IndexError):
+                embed = Embed(
                     title=f"รายงานผลของ {interaction.user.name}",
-                    color=discord.Colour.green(),
+                    color=Colour.green(),
                 )
                 embed.add_field(
                     name=f"ผลรายงานครั้งที่ {index+1}",
@@ -396,20 +381,20 @@ class Health(commands.Cog):
     @app_commands.describe(user="เลือก user ที่ต้องการจะลบข้อมูล")
     async def delete(
         self,
-        interaction: discord.Interaction,
-        user: Union[discord.User, discord.Member] = None,
-    ) -> Union[discord.Message, discord.InteractionMessage]:
+        interaction: Interaction,
+        user: Union[User, Member] = None,
+    ) -> InteractionMessage:
         """ลบฐานข้อมูลของ user ทั้งหมดหรือเฉพาะคน"""
         if interaction.user.id in [self.bot.owner.id, self.bot.partner_id]:
             await self.database.delete(user_id=user.id)
-            embed = discord.Embed(
+            embed = Embed(
                 description=f"✅| Delete {user.mention} successfully!",
-                color=discord.Colour.green(),
+                color=Colour.green(),
             )
         else:
-            embed = discord.Embed(
+            embed = Embed(
                 description="คุณไม่มีสิทธิ์ในการลบข้อมูล user ได้",
-                color=discord.Colour.red(),
+                color=Colour.red(),
             )
         await interaction.response.send_message(embed=embed)
 
