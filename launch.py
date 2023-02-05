@@ -24,13 +24,11 @@ SOFTWARE.
 
 from bot import DiseasesBot
 
-import asyncpg
 import asyncio
 import contextlib
 import discord
 import click
 import logging
-import sys
 
 from logging.handlers import RotatingFileHandler
 
