@@ -31,7 +31,7 @@ from typing import Union
 class Formatter:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-    
+
     @staticmethod
     def unix_formatter(date: Union[int, datetime]) -> int:
         if isinstance(date, str):
@@ -40,11 +40,11 @@ class Formatter:
         elif isinstance(date, datetime):
             date = int(mktime(date.timetuple()))
         return date
-        
+
     @property
     def prefix(self) -> str:
-        return '```'
-    
+        return "```"
+
     @property
     def suffix(self) -> str:
-        return '```'
+        return "```"

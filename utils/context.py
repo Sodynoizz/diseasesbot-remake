@@ -36,24 +36,28 @@ if TYPE_CHECKING:
 
 class Context(commands.Context):
     bot: DiseasesBot
-    
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-    
+
     def __repr__(self) -> str:
-        return '<Context>'
-    
+        return "<Context>"
+
     @property
     def session(self) -> ClientSession:
         return self.bot.session
-    
-    async def safe_send(self, content: str, *, escape_mentions: bool = True, **kwargs) -> discord.Message:
+
+    async def safe_send(
+        self, content: str, *, escape_mentions: bool = True, **kwargs
+    ) -> discord.Message:
         if escape_mentions:
             content = discord.utils.escape_mentions(content)
-        
+
         if len(content) > 2000:
             fp = io.BytesIO(content.encode())
-            kwargs.pop('file', None)
-            return await self.send(file=discord.File(fp, filename='message.txt'), **kwargs)
-        
+            kwargs.pop("file", None)
+            return await self.send(
+                file=discord.File(fp, filename="message.txt"), **kwargs
+            )
+
         await self.send(content)
