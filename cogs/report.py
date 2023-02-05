@@ -22,15 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import discord
-from discord import app_commands
-from discord.ext import commands
-from discord.ui import Button, Modal, Select, TextInput, View
-from typing import Union
-
-from bot import DiseasesBot
-from utils.database import Database
-from config import secret
+from .__init__ import *
 
 
 class ReportModal(Modal):
@@ -41,22 +33,22 @@ class ReportModal(Modal):
     name = TextInput(
         label="ชื่อปัญหา / ข้อเสนอแนะ",
         placeholder="ระบุชื่อปัญหาที่นี่",
-        style=discord.TextStyle.short,
+        style=TextStyle.short,
     )
     description = TextInput(
         label="อธิบายปัญหา",
         placeholder="อธิบายปัญหาที่นี่",
-        style=discord.TextStyle.paragraph,
+        style=TextStyle.paragraph,
     )
 
-    async def on_submit(self, interaction: discord.Interaction):
+    async def on_submit(self, interaction: Interaction):
         user = interaction.user
-        channel = self.bot.get_channel(secret.report_channel)
+        channel = self.bot.get_channel(report_channel)
 
-        embed = discord.Embed(
+        embed = Embed(
             title=f"{str(self.name).title()}",
             description=f"```{self.description}```",
-            color=discord.Colour.red(),
+            color=Colour.red(),
         )
         embed.set_footer(text=f"Requested by {user}", icon_url=user.avatar.url)
 
@@ -75,9 +67,7 @@ class ReportModal(Modal):
 
 
 class ReportView(View):
-    def __init__(
-        self, url: str, user: Union[discord.Member, discord.User], *args, **kwargs
-    ):
+    def __init__(self, url: str, user: Union[Member, User], *args, **kwargs):
         super().__init__(timeout=None, *args, **kwargs)
         self.url = url
         self.user = user
@@ -89,7 +79,7 @@ class ReportView(View):
             )
         )
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: Interaction) -> bool:
         return self.user == interaction.user
 
 
@@ -97,7 +87,7 @@ class RateView(View):
     def __init__(
         self,
         bot: DiseasesBot,
-        user: Union[discord.Member, discord.User],
+        user: Union[Member, User],
         *args,
         **kwargs,
     ):
@@ -117,8 +107,8 @@ class RateView(View):
                     label="⭐" * i, description=f"Give {i} stars", value=i
                 )
 
-    @discord.ui.select(placeholder="Rate Here")
-    async def callback(self, interaction: discord.Interaction, select: Select):
+    @select(placeholder="Rate Here")
+    async def callback(self, interaction: Interaction, select: Select):
         rates = await self.database.fetch_rates()
         rates[0] += 1
         rates[1] += int(select.values[0])
@@ -134,18 +124,18 @@ class RateView(View):
 
         await self.database.update_rate(clients=rates[0], scores=rates[1])
 
-        embed = discord.Embed(
+        embed = Embed(
             title="Rate Successful",
             description=description,
-            color=discord.Colour.green(),
+            color=Colour.green(),
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: Interaction) -> bool:
         return self.user == interaction.user
 
     async def on_timeout(self) -> None:
-        self.message: Union[discord.Message, discord.InteractionMessage]
+        self.message: Union[Message, InteractionMessage]
         for child in self.children:
             child.disabled = True
         await self.message.edit(view=self)
@@ -164,24 +154,22 @@ class Report(commands.Cog):
 
     @app_commands.command(name="report")
     @app_commands.checks.cooldown(1, 30)
-    async def report(
-        self, ctx: commands.Context
-    ) -> Union[discord.Message, discord.InteractionMessage]:
+    async def report(self, ctx: commands.Context) -> Union[Message, InteractionMessage]:
         """รายงานปัญหาเกี่ยวกับบอท"""
         await ctx.interaction.response.send_modal(ReportModal(self.bot))
 
     @app_commands.command(name="vote")
     @app_commands.checks.cooldown(1, 30)
     async def vote(
-        self, interaction: discord.Interaction
-    ) -> Union[discord.Message, discord.InteractionMessage]:
+        self, interaction: Interaction
+    ) -> Union[Message, InteractionMessage]:
         """โหวตให้คะแนนบอท"""
         view = RateView(bot=self.bot, user=interaction.user)
 
-        embed = discord.Embed(
+        embed = Embed(
             title="Vote Command",
             description="ให้คะแนนบอท <@1040974651247034418>",
-            color=discord.Colour.blurple(),
+            color=Colour.blurple(),
         )
         embed.set_footer(
             text=f"Requested by {interaction.user}",
@@ -193,9 +181,7 @@ class Report(commands.Cog):
 
     @app_commands.command(name="rating")
     @app_commands.checks.cooldown(1, 30)
-    async def rating(
-        self, interaction: discord.Interaction
-    ) -> discord.InteractionMessage:
+    async def rating(self, interaction: Interaction) -> InteractionMessage:
         """เช็คเรตติ้งของบอท"""
         rates = await self.database.fetch_rates()
 
@@ -205,7 +191,7 @@ class Report(commands.Cog):
             average = 0
 
         description = f"**Current rating of this bot is** `{average}/5`\n```yaml\nTOTAL SCORES : {rates[1]}\nTOTAL VOTES  : {rates[0]}```"
-        embed = discord.Embed(description=description, color=discord.Colour.yellow())
+        embed = Embed(description=description, color=Colour.yellow())
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 

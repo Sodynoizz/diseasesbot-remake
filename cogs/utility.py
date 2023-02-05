@@ -22,15 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import discord
-from discord import app_commands
-from discord.ext import commands
-from discord.ui import button, Button, Modal, TextInput, View
-import time
-from typing import Union, Self
-
-from bot import DiseasesBot
-from utils.database import Database
+from .__init__ import *
 
 
 class FindPage(Modal):
@@ -39,13 +31,13 @@ class FindPage(Modal):
         self.pages = pages
         self.view = view
         self.add_item(
-            TextInput(label="ใส่เลขหน้าที่ต้องการเปิด", style=discord.TextStyle.short)
+            TextInput(label="ใส่เลขหน้าที่ต้องการเปิด", style=TextStyle.short)
         )
 
     async def display(
-        self, interaction: discord.Interaction, number: int
-    ) -> Union[discord.InteractionMessage, discord.Message]:
-        self.indicator_page: discord.ui.Button
+        self, interaction: Interaction, number: int
+    ) -> Union[InteractionMessage, Message]:
+        self.indicator_page: Button
         self.view.current_page = number
         self.view.indicator_page.label = (
             f"{self.view.current_page + 1} / {self.view.len_pages}"
@@ -56,7 +48,7 @@ class FindPage(Modal):
             embed=self.view._pages[number % self.view.len_pages], view=view
         )
 
-    async def on_submit(self, interaction: discord.Interaction):
+    async def on_submit(self, interaction: Interaction):
         value = str(self.children[0].value)
         if value.isnumeric and int(value) in range(1, 6):
             await self.display(interaction, number=int(value) - 1)
@@ -81,7 +73,7 @@ class MemberView(View):
 
         self.indicator()
 
-    async def start(self, interaction: discord.Interaction):
+    async def start(self, interaction: Interaction):
         self.interaction = interaction
         await self.update_state(self.current_page)
         await self.interaction.response.send_message(embed=self._pages[0], view=self)
@@ -90,38 +82,38 @@ class MemberView(View):
     @button(
         label="first",
         emoji="<:first_page_white:1058405780895842405>",
-        style=discord.ButtonStyle.secondary,
+        style=ButtonStyle.secondary,
     )
-    async def first_page(self, interaction: discord.Interaction, button: Button):
+    async def first_page(self, interaction: Interaction, button: Button):
         await self.show_page(interaction, 0)
 
     @button(
         label="prev",
         emoji="<:previous:999541041327775784>",
-        style=discord.ButtonStyle.secondary,
+        style=ButtonStyle.secondary,
     )
-    async def before_page(self, interaction: discord.Interaction, button: Button):
+    async def before_page(self, interaction: Interaction, button: Button):
         await self.show_page(interaction, self.current_page - 1)
 
-    @button(emoji="🔍", style=discord.ButtonStyle.primary, disabled=True)
-    async def indicator_page(self, interaction: discord.Interaction, button: Button):
+    @button(emoji="🔍", style=ButtonStyle.primary, disabled=True)
+    async def indicator_page(self, interaction: Interaction, button: Button):
         modal = FindPage(self._pages, view=self)
         await interaction.response.send_modal(modal)
 
     @button(
         label="next",
         emoji="<:next:999541035304747120>",
-        style=discord.ButtonStyle.secondary,
+        style=ButtonStyle.secondary,
     )
-    async def next_page(self, interaction: discord.Interaction, button: Button):
+    async def next_page(self, interaction: Interaction, button: Button):
         await self.show_page(interaction, self.current_page + 1)
 
     @button(
         label="last",
         emoji="<:last_page_white:1058405905592500365>",
-        style=discord.ButtonStyle.secondary,
+        style=ButtonStyle.secondary,
     )
-    async def last_page(self, interaction: discord.Interaction, button: Button):
+    async def last_page(self, interaction: Interaction, button: Button):
         await self.show_page(interaction, self.len_pages - 1)
 
     def refresh_state(self, is_disabled: bool = False) -> None:
@@ -133,8 +125,8 @@ class MemberView(View):
         self.indicator_page.label = f"{self.current_page + 1} / {self.len_pages}"
 
     async def show_page(
-        self, interaction: discord.Interaction, number: int
-    ) -> Union[discord.InteractionMessage, discord.Message]:
+        self, interaction: Interaction, number: int
+    ) -> Union[InteractionMessage, Message]:
         self.indicator_page: Button
         self.current_page = number
         self.indicator_page.label = f"{self.current_page + 1} / {self.len_pages}"
@@ -157,7 +149,7 @@ class MemberView(View):
 
         return self
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: Interaction) -> bool:
         return self.interaction.user == interaction.user
 
     async def on_timeout(self) -> None:
@@ -168,7 +160,7 @@ class MemberView(View):
         self.stop()
 
 
-class InviteView(discord.ui.View):
+class InviteView(View):
     def __init__(self, bot: DiseasesBot, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.bot = bot
@@ -202,10 +194,10 @@ class Utility(commands.Cog):
             description += f"{index+1}.) {member[index]['name']} เลขที่ {member[index]['number']}\n"
         description += "```"
 
-        homeembed = discord.Embed(
+        homeembed = Embed(
             title="สมาชิกผู้จัดทำโครงงาน Diseases Bot",
             description=description,
-            color=discord.Colour.green(),
+            color=Colour.green(),
         )
         homeembed.set_image(
             url="https://media.discordapp.net/attachments/780424031035457588/1023543726716493834/Pandemic.jpg"
@@ -213,8 +205,8 @@ class Utility(commands.Cog):
         members = [homeembed]
 
         for index in range(5):
-            embed = discord.Embed(
-                title="รายชื่อสมาชิกผู้จัดทำโครงงาน", color=discord.Colour.dark_theme()
+            embed = Embed(
+                title="รายชื่อสมาชิกผู้จัดทำโครงงาน", color=Colour.dark_theme()
             )
             embed.description = (
                 f"```ชื่อ-นามสกุล : {member[index]['name']}\nชื่อเล่น : {member[index]['nickname']}\n"
@@ -228,9 +220,7 @@ class Utility(commands.Cog):
 
     @app_commands.command(name="member")
     @app_commands.checks.cooldown(1, 15)
-    async def member(
-        self, interaction: discord.Interaction
-    ) -> discord.InteractionMessage:
+    async def member(self, interaction: Interaction) -> InteractionMessage:
         """สมาชิกผู้จัดทำโครงงาน"""
         member = await self.database.fetch_members()
         pages = self.build_pages(member)
@@ -240,14 +230,12 @@ class Utility(commands.Cog):
 
     @app_commands.command(name="invite")
     @app_commands.checks.cooldown(1, 10)
-    async def invite(
-        self, interaction: discord.Interaction
-    ) -> discord.InteractionMessage:
+    async def invite(self, interaction: Interaction) -> InteractionMessage:
         """เชิญบอทเข้า server"""
         description = f"Discord Server : [`click here`]({self.bot.server_invite})\n"
         description += f"Invite this bot : [`click here`]({self.bot.bot_invite})"
 
-        embed = discord.Embed(title="Invite", color=discord.Colour.dark_purple())
+        embed = Embed(title="Invite", color=Colour.dark_purple())
         embed.description = description
         embed.set_image(
             url="https://media.discordapp.net/attachments/780424031035457588/1023543726716493834/Pandemic.jpg"
@@ -257,9 +245,7 @@ class Utility(commands.Cog):
 
     @app_commands.command(name="ping")
     @app_commands.checks.cooldown(1, 10)
-    async def ping(
-        self, interaction: discord.Interaction
-    ) -> discord.InteractionMessage:
+    async def ping(self, interaction: Interaction) -> InteractionMessage:
         """เช็คความหน่วงของบอท"""
         # Bot Ping
         bot_ping = round(self.bot.latency * 1000)
@@ -282,9 +268,7 @@ class Utility(commands.Cog):
             f"<a:latency:1022733012464582746> **API Ping** : `{api_ping}` ms"
         )
 
-        embed = discord.Embed(
-            title="Ping", description=description, color=discord.Colour.dark_theme()
-        )
+        embed = Embed(title="Ping", description=description, color=Colour.dark_theme())
         embed.set_footer(
             text=f"Requested by {interaction.user}",
             icon_url=interaction.user.avatar.url,

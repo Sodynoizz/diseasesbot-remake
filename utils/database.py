@@ -22,13 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import aiohttp
-from discord.ext import commands
-import json
-from typing import Optional
-
-from config import secret
-from .formatter import Formatter
+from .__init__ import *
 
 
 class Database:
@@ -137,8 +131,8 @@ class Database:
             return mapping
 
     async def fetch_covid_data(self) -> dict:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(secret.covid_api) as response:
+        async with ClientSession() as session:
+            async with session.get(covid_api) as response:
                 res = await response.json()
                 result = res[0]
 

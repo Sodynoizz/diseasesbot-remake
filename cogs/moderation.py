@@ -22,18 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import contextlib
-import discord
-from discord import app_commands, utils
-from discord.ext import commands
-from discord.ui import Button, Modal, TextInput, View
-from typing import Union
-
-from bot import DiseasesBot
-from config import secret
-
-from utils.database import Database
-from utils.formatter import Formatter
+from .__init__ import *
 
 
 class PrefixModal(Modal):
@@ -43,11 +32,11 @@ class PrefixModal(Modal):
 
     prefix = TextInput(label="ใส่ prefix ที่ต้องการ", placeholder="พิมพ์ที่นี่")
 
-    async def on_submit(self, interaction: discord.Interaction):
-        embed = discord.Embed(
+    async def on_submit(self, interaction: Interaction):
+        embed = Embed(
             title="Confirm",
             description="Are you sure to change guild prefix?",
-            color=discord.Colour.green(),
+            color=Colour.green(),
         )
         view = ConfirmView(
             author=interaction.user,
@@ -68,19 +57,19 @@ class ModerationModal(Modal):
     answer = TextInput(label="ใส่ user id", placeholder="provide user id here")
     reason = TextInput(label="ใส่เหตุผล", placeholder="provide a reason")
 
-    def build_embed(self, user: Union[discord.Member, discord.User]) -> discord.Embed:
-        return discord.Embed(
+    def build_embed(self, user: Union[Member, User]) -> Embed:
+        return Embed(
             description=f"Are you sure to {self.mod_type.replace('_', ' ')} {user.mention or user}?",
-            color=discord.Colour.green(),
+            color=Colour.green(),
         )
 
-    async def on_submit(self, interaction: discord.Interaction):
+    async def on_submit(self, interaction: Interaction):
         if str(self.answer).isnumeric():
             try:
                 guild = interaction.guild
 
-                user: discord.Member = guild.get_member(int(str(self.answer)))
-                user2: discord.User = await self.bot.fetch_user(int(str(self.answer)))
+                user: Member = guild.get_member(int(str(self.answer)))
+                user2: User = await self.bot.fetch_user(int(str(self.answer)))
 
                 if self.mod_type == "unban":
                     embed = self.build_embed(user=user2)
@@ -107,22 +96,22 @@ class ModerationModal(Modal):
                         await interaction.response.send_message(embed=embed, view=view)
                         view.message = await interaction.original_response()
                     else:
-                        embed = discord.Embed(
+                        embed = Embed(
                             description="Member not found in this server",
-                            color=discord.Colour.red(),
+                            color=Colour.red(),
                         )
                         await interaction.response.send_message(embed=embed)
 
             except ValueError:
-                embed = discord.Embed(
+                embed = Embed(
                     description="Please input a valid user id",
-                    color=discord.Colour.red(),
+                    color=Colour.red(),
                 )
                 await interaction.response.send_message(embed=embed)
 
         else:
-            embed = discord.Embed(
-                description="Please input a valid user id", color=discord.Colour.red()
+            embed = Embed(
+                description="Please input a valid user id", color=Colour.red()
             )
             await interaction.response.send_message(embed=embed)
 
@@ -132,7 +121,7 @@ class ModerationModal(Modal):
 class ConfirmView(View):
     def __init__(
         self,
-        author: Union[discord.Member, discord.User],
+        author: Union[Member, User],
         bot: DiseasesBot,
         confirm_label: str,
         res=None,
@@ -147,20 +136,20 @@ class ConfirmView(View):
         self.res = res
         self.res2 = res2
 
-    async def confirm_ban(self, interaction: discord.Interaction):
-        if isinstance(self.res, discord.Member) and isinstance(self.res2, str):
+    async def confirm_ban(self, interaction: Interaction):
+        if isinstance(self.res, Member) and isinstance(self.res2, str):
             await self.res.ban(reason=self.res2)
-            embed = discord.Embed(
+            embed = Embed(
                 description=f"<:recommended:976850769426911343> | Banned {self.res.mention} with reason `{self.res2}` successfully",
-                color=discord.Colour.red(),
+                color=Colour.red(),
             )
             self.disable_all_items()
             await interaction.response.edit_message(
                 embed=embed, view=self, delete_after=10
             )
 
-    async def confirm_unban(self, interaction: discord.Interaction):
-        if isinstance(self.res, discord.User) and isinstance(self.res2, str):
+    async def confirm_unban(self, interaction: Interaction):
+        if isinstance(self.res, User) and isinstance(self.res2, str):
             async for entry in interaction.guild.bans():
                 if (entry.user.name, entry.user.discriminator) == (
                     self.res.name,
@@ -168,9 +157,9 @@ class ConfirmView(View):
                 ):
                     await interaction.guild.unban(self.res, reason=self.res2)
 
-            embed = discord.Embed(
+            embed = Embed(
                 description=f"<:recommended:976850769426911343> | Unbanned {self.res.mention} with reason `{self.res2}` successfully",
-                color=discord.Colour.green(),
+                color=Colour.green(),
             )
 
             self.disable_all_items()
@@ -178,10 +167,10 @@ class ConfirmView(View):
                 embed=embed, view=self, delete_after=10
             )
 
-    async def confirm_prefix(self, interaction: discord.Interaction):
-        embed = discord.Embed(
+    async def confirm_prefix(self, interaction: Interaction):
+        embed = Embed(
             description=f"<:recommended:976850769426911343> | Change prefix to `{self.res}` successfully",
-            color=discord.Colour.green(),
+            color=Colour.green(),
         )
         await self.bot.db.execute(
             'UPDATE guilds SET prefix = $1 WHERE "guild_id" = $2',
@@ -191,38 +180,38 @@ class ConfirmView(View):
         self.disable_all_items()
         await interaction.response.edit_message(embed=embed, view=self, delete_after=10)
 
-    async def reset_prefix(self, interaction: discord.Interaction):
-        embed = discord.Embed(
-            description=f"<:recommended:976850769426911343> | Change prefix to `{secret.default_prefix}` successfully",
-            color=discord.Colour.green(),
+    async def reset_prefix(self, interaction: Interaction):
+        embed = Embed(
+            description=f"<:recommended:976850769426911343> | Change prefix to `{default_prefix}` successfully",
+            color=Colour.green(),
         )
         await self.bot.db.execute(
             'UPDATE guilds SET prefix = $1 WHERE "guild_id" = $2',
-            secret.default_prefix,
+            default_prefix,
             interaction.guild.id,
         )
         self.disable_all_items()
         await interaction.response.edit_message(embed=embed, view=self, delete_after=10)
 
-    async def confirm_kick(self, interaction: discord.Interaction):
-        if isinstance(self.res, discord.Member) and isinstance(self.res2, str):
+    async def confirm_kick(self, interaction: Interaction):
+        if isinstance(self.res, Member) and isinstance(self.res2, str):
             await self.res.kick(reason=self.res2)
 
-        embed = discord.Embed(
+        embed = Embed(
             description=f"<:recommended:976850769426911343> | Kicked {self.res.mention} with reason `{self.res2}` successfully",
-            color=discord.Colour.green(),
+            color=Colour.green(),
         )
         self.disable_all_items()
         await interaction.response.edit_message(embed=embed, view=self, delete_after=10)
 
-    @discord.ui.button(label="CONFIRM", style=discord.ButtonStyle.success)
-    async def confirm(self, interaction: discord.Interaction, button: Button):
+    @button(label="CONFIRM", style=ButtonStyle.success)
+    async def confirm(self, interaction: Interaction, button: Button):
         function = getattr(self, self.confirm_label)
         await function(interaction)
 
-    @discord.ui.button(label="CANCEL", style=discord.ButtonStyle.danger)
-    async def cancel(self, interaction: discord.Interaction, button: Button):
-        embed = discord.Embed(description="Canceled.", color=discord.Colour.red())
+    @button(label="CANCEL", style=ButtonStyle.danger)
+    async def cancel(self, interaction: Interaction, button: Button):
+        embed = Embed(description="Canceled.", color=Colour.red())
         self.disable_all_items()
         await interaction.response.edit_message(embed=embed, view=self, delete_after=10)
         self.stop()
@@ -232,19 +221,19 @@ class ConfirmView(View):
             child.disabled = True
 
     async def on_timeout(self):
-        with contextlib.suppress(discord.errors.NotFound):
-            self.message: Union[discord.Message, discord.InteractionMessage]
+        with suppress(errors.NotFound):
+            self.message: Union[Message, InteractionMessage]
             self.disable_all_items()
             await self.message.edit(content="⏰| Timed Out...", view=self)
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: Interaction) -> bool:
         return self.author == interaction.user
 
 
 class ModPanelView(View):
     def __init__(
         self,
-        author: Union[discord.Member, discord.User],
+        author: Union[Member, User],
         bot: DiseasesBot,
         *args,
         **kwargs,
@@ -254,16 +243,16 @@ class ModPanelView(View):
         self.bot = bot
         self._request()
 
-    @discord.ui.button(label="Change Prefix", style=discord.ButtonStyle.primary, row=1)
-    async def change_prefix(self, interaction: discord.Interaction, button: Button):
+    @button(label="Change Prefix", style=ButtonStyle.primary, row=1)
+    async def change_prefix(self, interaction: Interaction, button: Button):
         await interaction.response.send_modal(PrefixModal(self.bot))
 
-    @discord.ui.button(label="Reset Prefix", style=discord.ButtonStyle.danger, row=1)
-    async def reset_prefix(self, interaction: discord.Interaction, button: Button):
-        embed = discord.Embed(
+    @button(label="Reset Prefix", style=ButtonStyle.danger, row=1)
+    async def reset_prefix(self, interaction: Interaction, button: Button):
+        embed = Embed(
             title="Confirm",
             description="Are you sure to reset prefix?",
-            color=discord.Colour.green(),
+            color=Colour.green(),
         )
         view = ConfirmView(
             author=interaction.user, bot=self.bot, confirm_label="reset_prefix"
@@ -271,24 +260,24 @@ class ModPanelView(View):
         await interaction.response.send_message(embed=embed, view=view)
         view.message = await interaction.original_response()
 
-    @discord.ui.button(label="Ban User", style=discord.ButtonStyle.danger, row=1)
-    async def ban_user(self, interaction: discord.Interaction, button: Button):
+    @button(label="Ban User", style=ButtonStyle.danger, row=1)
+    async def ban_user(self, interaction: Interaction, button: Button):
         await interaction.response.send_modal(ModerationModal(self.bot, "ban"))
 
-    @discord.ui.button(label="Kick User", style=discord.ButtonStyle.danger, row=1)
-    async def kick_user(self, interaction: discord.Interaction, button: Button):
+    @button(label="Kick User", style=ButtonStyle.danger, row=1)
+    async def kick_user(self, interaction: Interaction, button: Button):
         await interaction.response.send_modal(ModerationModal(self.bot, "kick"))
 
-    @discord.ui.button(label="Unban User", style=discord.ButtonStyle.success, row=2)
-    async def unban_user(self, interaction: discord.Interaction, button: Button):
+    @button(label="Unban User", style=ButtonStyle.success, row=2)
+    async def unban_user(self, interaction: Interaction, button: Button):
         await interaction.response.send_modal(ModerationModal(self.bot, "unban"))
 
-    @discord.ui.button(style=discord.ButtonStyle.secondary, disabled=True, row=2)
-    async def request(self, interaction: discord.Interaction, button: Button):
+    @button(style=ButtonStyle.secondary, disabled=True, row=2)
+    async def request(self, interaction: Interaction, button: Button):
         ...
 
     def _request(self) -> None:
-        self.request: discord.ui.Button
+        self.request: Button
         self.request.label = f"Requested by {self.author}"
 
     async def on_timeout(self) -> None:
@@ -296,7 +285,7 @@ class ModPanelView(View):
             child.disabled = True
         await self.message.edit(view=self)
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: Interaction) -> bool:
         return self.author == interaction.user
 
 
@@ -313,14 +302,14 @@ class Moderation(commands.Cog):
         print(f"{self.__class__.__name__.upper()} COG is activated")
 
     @staticmethod
-    def is_admin(author: Union[discord.Member, discord.User]) -> bool:
+    def is_admin(author: Union[Member, User]) -> bool:
         return author.guild_permissions.administrator
 
     @staticmethod
-    def no_permissions_embed() -> discord.Embed:
-        return discord.Embed(
+    def no_permissions_embed() -> Embed:
+        return Embed(
             description="You don't have `ADMINISTRATOR` permission to run this command",
-            color=discord.Colour.red(),
+            color=Colour.red(),
         )
 
     @app_commands.command(name="set_prefix")
@@ -329,13 +318,13 @@ class Moderation(commands.Cog):
     @app_commands.checks.cooldown(1, 30)
     @app_commands.checks.has_permissions(manage_guild=True)
     async def set_prefix(
-        self, interaction: discord.Interaction, prefix: str
-    ) -> Union[discord.Message, discord.InteractionMessage]:
+        self, interaction: Interaction, prefix: str
+    ) -> Union[Message, InteractionMessage]:
         """เปลี่ยน prefix ใน server นั้นๆ"""
         if self.is_admin(interaction.user):
-            embed = discord.Embed(
+            embed = Embed(
                 description=f"<:recommended:976850769426911343> | Change prefix to `{prefix}` successfully",
-                color=discord.Colour.green(),
+                color=Colour.green(),
             )
             await self.bot.db.execute(
                 'UPDATE guilds SET prefix = $1 WHERE "guild_id" = $2',
@@ -350,18 +339,16 @@ class Moderation(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.cooldown(1, 30)
     @app_commands.checks.has_permissions(manage_guild=True)
-    async def reset_prefix(
-        self, interaction: discord.Interaction
-    ) -> discord.InteractionMessage:
+    async def reset_prefix(self, interaction: Interaction) -> InteractionMessage:
         """รีเซ็ต prefix ใน server นั้นๆ"""
         if self.is_admin(interaction.user):
-            embed = discord.Embed(
-                description=f"<:recommended:976850769426911343> | Reset prefix to `{secret.default_prefix}` successfully",
-                color=discord.Colour.green(),
+            embed = Embed(
+                description=f"<:recommended:976850769426911343> | Reset prefix to `{default_prefix}` successfully",
+                color=Colour.green(),
             )
             await self.bot.db.execute(
                 'UPDATE guilds SET prefix = $1 WHERE "guild_id" = $2',
-                secret.default_prefix,
+                default_prefix,
                 interaction.guild.id,
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -372,12 +359,10 @@ class Moderation(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.cooldown(1, 30)
     @app_commands.checks.has_permissions(manage_guild=True)
-    async def moderation_panel(
-        self, interaction: discord.Interaction
-    ) -> discord.InteractionMessage:
+    async def moderation_panel(self, interaction: Interaction) -> InteractionMessage:
         """หน้าค่าง Interface สำหรับ Admin"""
         if self.is_admin(interaction.user):
-            embed = discord.Embed(title="Moderation Panel", color=discord.Colour.red())
+            embed = Embed(title="Moderation Panel", color=Colour.red())
 
             embed.description = (
                 "**Available Commands**\n"
