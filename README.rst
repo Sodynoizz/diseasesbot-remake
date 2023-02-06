@@ -2,7 +2,7 @@ DiseasesBot Project
 ====================
 .. image:: https://discord.com/api/guilds/1021730173982347298/embed.png 
    :target: https://discord.gg/v5jBXfnX
-   :alt: 
+   :alt: Discord server
 .. image:: https://img.shields.io/pypi/pyversions/discord.py.svg?style=flat&logo=python&logoColor=white
    :width: 160
    :target: https://pypi.python.org/pypi/discord.py
