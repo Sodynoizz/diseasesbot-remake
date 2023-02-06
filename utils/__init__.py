@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+from aiohttp import ClientSession
 from typing import *
 
 if TYPE_CHECKING:
     from bot import DiseasesBot
-    from aiohttp import ClientSession
+    
     
 from datetime import datetime
 import discord

@@ -22,7 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .__init__ import *
+from typing import Union
+
+from contextlib import suppress
+from datetime import datetime
+from time import mktime
+
+with suppress(ImportError):
+    from .__init__ import *
 
 
 class Formatter:

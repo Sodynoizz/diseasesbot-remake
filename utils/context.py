@@ -25,8 +25,8 @@ SOFTWARE.
 from .__init__ import *
 
 
+
 class Context(commands.Context):
-    bot: DiseasesBot
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
