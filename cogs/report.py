@@ -135,7 +135,7 @@ class RateView(View):
         return self.user == interaction.user
 
     async def on_timeout(self) -> None:
-        self.message: Union[Message, InteractionMessage]
+        self.message: InteractionMessage
         for child in self.children:
             child.disabled = True
         await self.message.edit(view=self)
@@ -154,7 +154,7 @@ class Report(commands.Cog):
 
     @app_commands.command(name="report")
     @app_commands.checks.cooldown(1, 30)
-    async def report(self, ctx: commands.Context) -> Union[Message, InteractionMessage]:
+    async def report(self, ctx: commands.Context) -> InteractionMessage:
         """รายงานปัญหาเกี่ยวกับบอท"""
         await ctx.interaction.response.send_modal(ReportModal(self.bot))
 
@@ -162,7 +162,7 @@ class Report(commands.Cog):
     @app_commands.checks.cooldown(1, 30)
     async def vote(
         self, interaction: Interaction
-    ) -> Union[Message, InteractionMessage]:
+    ) -> InteractionMessage:
         """โหวตให้คะแนนบอท"""
         view = RateView(bot=self.bot, user=interaction.user)
 

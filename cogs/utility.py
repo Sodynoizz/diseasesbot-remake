@@ -36,7 +36,7 @@ class FindPage(Modal):
 
     async def display(
         self, interaction: Interaction, number: int
-    ) -> Union[InteractionMessage, Message]:
+    ) -> InteractionMessage:
         self.indicator_page: Button
         self.view.current_page = number
         self.view.indicator_page.label = (
@@ -126,7 +126,7 @@ class MemberView(View):
 
     async def show_page(
         self, interaction: Interaction, number: int
-    ) -> Union[InteractionMessage, Message]:
+    ) -> InteractionMessage:
         self.indicator_page: Button
         self.current_page = number
         self.indicator_page.label = f"{self.current_page + 1} / {self.len_pages}"
