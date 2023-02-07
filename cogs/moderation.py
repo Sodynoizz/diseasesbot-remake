@@ -32,7 +32,7 @@ class PrefixModal(Modal):
 
     prefix = TextInput(label="ใส่ prefix ที่ต้องการ", placeholder="พิมพ์ที่นี่")
 
-    async def on_submit(self, interaction: Interaction):
+    async def on_submit(self, interaction: Interaction) -> InteractionMessage:
         embed = Embed(
             title="Confirm",
             description="Are you sure to change guild prefix?",
@@ -63,7 +63,7 @@ class ModerationModal(Modal):
             color=Colour.green(),
         )
 
-    async def on_submit(self, interaction: Interaction):
+    async def on_submit(self, interaction: Interaction) -> InteractionMessage:
         if str(self.answer).isnumeric():
             try:
                 guild = interaction.guild
@@ -136,7 +136,7 @@ class ConfirmView(View):
         self.res = res
         self.res2 = res2
 
-    async def confirm_ban(self, interaction: Interaction):
+    async def confirm_ban(self, interaction: Interaction) -> InteractionMessage:
         if isinstance(self.res, Member) and isinstance(self.res2, str):
             await self.res.ban(reason=self.res2)
             embed = Embed(
@@ -148,7 +148,7 @@ class ConfirmView(View):
                 embed=embed, view=self, delete_after=10
             )
 
-    async def confirm_unban(self, interaction: Interaction):
+    async def confirm_unban(self, interaction: Interaction) -> InteractionMessage:
         if isinstance(self.res, User) and isinstance(self.res2, str):
             async for entry in interaction.guild.bans():
                 if (entry.user.name, entry.user.discriminator) == (
@@ -167,7 +167,7 @@ class ConfirmView(View):
                 embed=embed, view=self, delete_after=10
             )
 
-    async def confirm_prefix(self, interaction: Interaction):
+    async def confirm_prefix(self, interaction: Interaction) -> InteractionMessage:
         embed = Embed(
             description=f"<:recommended:976850769426911343> | Change prefix to `{self.res}` successfully",
             color=Colour.green(),
@@ -180,7 +180,7 @@ class ConfirmView(View):
         self.disable_all_items()
         await interaction.response.edit_message(embed=embed, view=self, delete_after=10)
 
-    async def reset_prefix(self, interaction: Interaction):
+    async def reset_prefix(self, interaction: Interaction) -> InteractionMessage:
         embed = Embed(
             description=f"<:recommended:976850769426911343> | Change prefix to `{default_prefix}` successfully",
             color=Colour.green(),
@@ -193,7 +193,7 @@ class ConfirmView(View):
         self.disable_all_items()
         await interaction.response.edit_message(embed=embed, view=self, delete_after=10)
 
-    async def confirm_kick(self, interaction: Interaction):
+    async def confirm_kick(self, interaction: Interaction) -> InteractionMessage:
         if isinstance(self.res, Member) and isinstance(self.res2, str):
             await self.res.kick(reason=self.res2)
 
@@ -205,12 +205,16 @@ class ConfirmView(View):
         await interaction.response.edit_message(embed=embed, view=self, delete_after=10)
 
     @button(label="CONFIRM", style=ButtonStyle.success)
-    async def confirm(self, interaction: Interaction, button: Button):
+    async def confirm(
+        self, interaction: Interaction, button: Button
+    ) -> InteractionMessage:
         function = getattr(self, self.confirm_label)
         await function(interaction)
 
     @button(label="CANCEL", style=ButtonStyle.danger)
-    async def cancel(self, interaction: Interaction, button: Button):
+    async def cancel(
+        self, interaction: Interaction, button: Button
+    ) -> InteractionMessage:
         embed = Embed(description="Canceled.", color=Colour.red())
         self.disable_all_items()
         await interaction.response.edit_message(embed=embed, view=self, delete_after=10)
@@ -220,9 +224,9 @@ class ConfirmView(View):
         for child in self.children:
             child.disabled = True
 
-    async def on_timeout(self):
+    async def on_timeout(self) -> None:
         with suppress(errors.NotFound):
-            self.message: Union[Message, InteractionMessage]
+            self.message: InteractionMessage
             self.disable_all_items()
             await self.message.edit(content="⏰| Timed Out...", view=self)
 
@@ -244,11 +248,13 @@ class ModPanelView(View):
         self._request()
 
     @button(label="Change Prefix", style=ButtonStyle.primary, row=1)
-    async def change_prefix(self, interaction: Interaction, button: Button):
+    async def change_prefix(self, interaction: Interaction, button: Button) -> None:
         await interaction.response.send_modal(PrefixModal(self.bot))
 
     @button(label="Reset Prefix", style=ButtonStyle.danger, row=1)
-    async def reset_prefix(self, interaction: Interaction, button: Button):
+    async def reset_prefix(
+        self, interaction: Interaction, button: Button
+    ) -> InteractionMessage:
         embed = Embed(
             title="Confirm",
             description="Are you sure to reset prefix?",
@@ -261,19 +267,19 @@ class ModPanelView(View):
         view.message = await interaction.original_response()
 
     @button(label="Ban User", style=ButtonStyle.danger, row=1)
-    async def ban_user(self, interaction: Interaction, button: Button):
+    async def ban_user(self, interaction: Interaction, button: Button) -> None:
         await interaction.response.send_modal(ModerationModal(self.bot, "ban"))
 
     @button(label="Kick User", style=ButtonStyle.danger, row=1)
-    async def kick_user(self, interaction: Interaction, button: Button):
+    async def kick_user(self, interaction: Interaction, button: Button) -> None:
         await interaction.response.send_modal(ModerationModal(self.bot, "kick"))
 
     @button(label="Unban User", style=ButtonStyle.success, row=2)
-    async def unban_user(self, interaction: Interaction, button: Button):
+    async def unban_user(self, interaction: Interaction, button: Button) -> None:
         await interaction.response.send_modal(ModerationModal(self.bot, "unban"))
 
     @button(style=ButtonStyle.secondary, disabled=True, row=2)
-    async def request(self, interaction: Interaction, button: Button):
+    async def request(self, interaction: Interaction, button: Button) -> None:
         ...
 
     def _request(self) -> None:
@@ -319,7 +325,7 @@ class Moderation(commands.Cog):
     @app_commands.checks.has_permissions(manage_guild=True)
     async def set_prefix(
         self, interaction: Interaction, prefix: str
-    ) -> Union[Message, InteractionMessage]:
+    ) -> InteractionMessage:
         """เปลี่ยน prefix ใน server นั้นๆ"""
         if self.is_admin(interaction.user):
             embed = Embed(
@@ -333,7 +339,7 @@ class Moderation(commands.Cog):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
-            await interaction.response.send_essage(embed=self.no_permissions_embed())
+            await interaction.response.send_message(embed=self.no_permissions_embed())
 
     @app_commands.command(name="reset_prefix")
     @app_commands.guild_only()
@@ -353,7 +359,7 @@ class Moderation(commands.Cog):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
-            await interaction.response.send_essage(embed=self.no_permissions_embed())
+            await interaction.response.send_message(embed=self.no_permissions_embed())
 
     @app_commands.command(name="moderation_panel")
     @app_commands.guild_only()

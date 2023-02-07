@@ -69,12 +69,14 @@ class RecordPaginator(View):
         self.max_page = len(self.pages)
         self.initialize_page()
 
-    async def start(self):
+    async def start(self) -> InteractionMessage:
         self.initialize_view(0)
         await self.interaction.response.send_message(embed=self.pages[0], view=self)
         self.message = await self.interaction.original_response()
 
-    async def show_page(self, interaction: Interaction, page: int):
+    async def show_page(
+        self, interaction: Interaction, page: int
+    ) -> InteractionMessage:
         self.current_page = page
         self.initialize_page()
         self.initialize_view(self.current_page)
@@ -88,7 +90,9 @@ class RecordPaginator(View):
         emoji="<:first_page_white:1058405780895842405>",
         style=ButtonStyle.secondary,
     )
-    async def first_page(self, interaction: Interaction, button: Button):
+    async def first_page(
+        self, interaction: Interaction, button: Button
+    ) -> InteractionMessage:
         await self.show_page(interaction, 0)
 
     @button(
@@ -96,11 +100,15 @@ class RecordPaginator(View):
         emoji="<:previous:999541041327775784>",
         style=ButtonStyle.secondary,
     )
-    async def previous_page(self, interaction: Interaction, button: Button):
+    async def previous_page(
+        self, interaction: Interaction, button: Button
+    ) -> InteractionMessage:
         await self.show_page(interaction, self.current_page - 1)
 
     @button(style=ButtonStyle.primary, disabled=True)
-    async def page_indicator(self, interaction: Interaction, button: Button):
+    async def page_indicator(
+        self, interaction: Interaction, button: Button
+    ) -> InteractionMessage:
         ...
 
     @button(
@@ -108,7 +116,9 @@ class RecordPaginator(View):
         emoji="<:next:999541035304747120>",
         style=ButtonStyle.secondary,
     )
-    async def next_page(self, interaction: Interaction, button: Button):
+    async def next_page(
+        self, interaction: Interaction, button: Button
+    ) -> InteractionMessage:
         await self.show_page(interaction, self.current_page + 1)
 
     @button(
@@ -116,7 +126,9 @@ class RecordPaginator(View):
         emoji="<:last_page_white:1058405905592500365>",
         style=ButtonStyle.secondary,
     )
-    async def last_page(self, interaction: Interaction, button: Button):
+    async def last_page(
+        self, interaction: Interaction, button: Button
+    ) -> InteractionMessage:
         await self.show_page(interaction, self.max_page - 1)
 
     def extract(self, arg1: bool, arg2: bool) -> None:
@@ -143,7 +155,7 @@ class RecordPaginator(View):
         return self.interaction.user == interaction.user
 
     async def on_timeout(self) -> None:
-        self.message: Union[Message, InteractionMessage]
+        self.message: InteractionMessage
         for child in self.children:
             child.disabled = True
         await self.message.edit(view=self)
@@ -165,7 +177,7 @@ class RecordHealth(Modal):
 
     description = TextInput(label="รายงานผลสุขภาพประจำวันนี้", style=TextStyle.long)
 
-    async def on_submit(self, interaction: Interaction):
+    async def on_submit(self, interaction: Interaction) -> InteractionMessage:
         date = Formatter.unix_formatter(datetime.now(timezone.utc))
         embed = Embed(
             title="ยืนยันการรายงานหรือไม่",
@@ -207,7 +219,9 @@ class ConfirmSend(View):
         self.database = Database(self.bot)
 
     @button(label="confirm", style=ButtonStyle.success)
-    async def confirm(self, interaction: Interaction, button: Button):
+    async def confirm(
+        self, interaction: Interaction, button: Button
+    ) -> InteractionMessage:
         self.disable_all_items()
         await self.database.health_info_entry(
             interaction.user.id, time=self.time, reason=self.reason
@@ -224,13 +238,15 @@ class ConfirmSend(View):
         await interaction.response.edit_message(embed=embed, view=self)
 
     @button(label="edit", style=ButtonStyle.danger)
-    async def edit(self, interaction: Interaction, button: Button):
+    async def edit(
+        self, interaction: Interaction, button: Button
+    ) -> InteractionMessage:
         modal = RecordHealth(self.bot, interaction.user, primary=False)
         await interaction.response.send_modal(modal)
         modal.message = await interaction.original_response()
 
-    async def interaction_check(self, interaction: Interaction):
-        return self.user.id == interaction.user.id
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        return self.user == interaction.user
 
     def disable_all_items(self) -> None:
         for child in self.children:
@@ -238,7 +254,7 @@ class ConfirmSend(View):
 
     async def on_timeout(self) -> None:
         self.disable_all_items()
-        self.message: Union[Message, InteractionMessage]
+        self.message: InteractionMessage
         with suppress(TypeError, errors.NotFound):
             await self.message.edit(view=self)
             await asyncio.sleep(5)
@@ -262,7 +278,7 @@ class Health(commands.Cog):
     @app_commands.describe(diseases_name="เลือกโรคที่ต้องการ")
     async def diseases(
         self, interaction: Interaction, diseases_name: str
-    ) -> Union[Message, InteractionMessage]:
+    ) -> InteractionMessage:
         """ตรวจสอบรายละเอียดโรคระบาดแต่ละโรค"""
         info = None
 
@@ -307,9 +323,7 @@ class Health(commands.Cog):
 
     @app_commands.command(name="covid_stats")
     @app_commands.checks.cooldown(1, 15)
-    async def covid_stats(
-        self, interaction: Interaction
-    ) -> Union[Message, InteractionMessage]:
+    async def covid_stats(self, interaction: Interaction) -> InteractionMessage:
         """รายงานสถิติโควิด-19 ในประเทศไทย"""
         data = await self.database.fetch_covid_data()
         embed = Embed(
@@ -385,12 +399,22 @@ class Health(commands.Cog):
         user: Union[User, Member] = None,
     ) -> InteractionMessage:
         """ลบฐานข้อมูลของ user ทั้งหมดหรือเฉพาะคน"""
+
         if interaction.user.id in [self.bot.owner.id, self.bot.partner_id]:
-            await self.database.delete(user_id=user.id)
-            embed = Embed(
-                description=f"✅| Delete {user.mention} successfully!",
-                color=Colour.green(),
-            )
+            if user:
+                await self.database.delete(user_id=user.id)
+                embed = Embed(
+                    description=f"✅| Delete {user.mention} successfully!",
+                    color=Colour.green(),
+                )
+
+            else:
+                await self.database.delete()
+                embed = Embed(
+                    description="✅| Delete all info in database successfully!",
+                    color=discord.Colour.green(),
+                )
+
         else:
             embed = Embed(
                 description="คุณไม่มีสิทธิ์ในการลบข้อมูล user ได้",
