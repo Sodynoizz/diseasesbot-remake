@@ -11,6 +11,9 @@ DiseasesBot Project
    :target: https://discord.com/channels/@me/884707218577063998
    :alt: My discord account
 
+.. image:: /config/banner.jpg
+   :alt: DiseasesBot banner
+   
 A bot which using Discord.py v2.0 library which is a modern, easy to use, feature-rich, and async ready API wrapper for Discord Written in Python to create about health information and others.
 
 Installing
@@ -123,7 +126,3 @@ Contributors
 - `Pun Tresattayapan <https://www.instagram.com/puntre_is_bruh/>`_
 - `Pattanasang Pinijpichitkul <https://www.instagram.com/ll_ph.pp_ll/>`_
 - `Siraphop Klawplad <https://www.instagram.com/pskhaw_143/>`_  
-
-.. image:: /config/banner.jpg
-   :alt: DiseasesBot banner
-   
