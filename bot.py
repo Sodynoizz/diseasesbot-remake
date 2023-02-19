@@ -121,9 +121,9 @@ class DiseasesBot(commands.AutoShardedBot):
 
     async def on_message(self, message: discord.Message) -> None:
         if message.author.bot:
-            return
+            return 
         await self.process_commands(message)
-
+    
     async def close(self) -> None:
         await super().close()
 
