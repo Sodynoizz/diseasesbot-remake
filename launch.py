@@ -82,7 +82,7 @@ def main(ctx) -> None:
     if ctx.invoked_subcommand is None:
         with setup_logging():
             asyncio.run(run_bot())
-
+    
 if __name__ == '__main__':
     main()
             

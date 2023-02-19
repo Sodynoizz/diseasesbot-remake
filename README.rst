@@ -1,9 +1,11 @@
 DiseasesBot Project
-====================
+==================== 
 .. image:: https://discord.com/api/guilds/1021730173982347298/embed.png 
+   :align: center
    :target: https://discord.gg/v5jBXfnX
    :alt: Discord server
 .. image:: https://img.shields.io/pypi/pyversions/discord.py.svg?style=flat&logo=python&logoColor=white
+   :align: center
    :width: 160
    :target: https://pypi.python.org/pypi/discord.py
    :alt: PyPI supported Python versions
